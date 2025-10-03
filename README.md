@@ -2,6 +2,11 @@
 
 A modern, full-stack application for tracking your anime and manga collection with beautiful statistics and bulk management features.
 
+<div align="center">
+  <img src="screenshots/anime.png" alt="AniRyu Anime List" width="800"/>
+  <p><em>Beautiful, modern interface for managing your anime and manga collection</em></p>
+</div>
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -62,6 +67,28 @@ pnpm run dev
 - 📈 **Progress Tracking** - Monitor your watch/read progress
 - ⭐ **Rating System** - Rate your favorite shows and books
 
+## 📸 Screenshots
+
+### Main Interface
+![Anime List](screenshots/anime.png)
+*Clean and modern anime list interface with beautiful cards*
+
+![Manga List](screenshots/manga.png)
+*Organized manga collection with progress tracking*
+
+### Key Features
+![Add New Entry](screenshots/add_new.png)
+*Easy-to-use form for adding new anime or manga*
+
+![Edit Entry](screenshots/edit.png)
+*Comprehensive editing interface with all details*
+
+![Import from AniList](screenshots/import.png)
+*Seamless import from AniList with progress tracking*
+
+![Deleted Entries](screenshots/deleted.png)
+*Manage deleted entries with restore functionality*
+
 ## 🛠️ Tech Stack
 
 ### Frontend
@@ -83,7 +110,6 @@ pnpm run dev
 ### Development Tools
 - **ESLint** - Code linting
 - **PostCSS** - CSS processing
-- **Lovable Tagger** - Component tagging
 
 ## 📁 Project Structure
 ```
