@@ -1,0 +1,311 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Hide scrollbars but keep functionality */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* WebKit */
+}
+
+/* AMOLED Black + Red Theme */
+@layer base {
+  :root {
+    /* AMOLED Black with Red Accents */
+    --background: 0 0% 0%; /* Pure AMOLED black */
+    --foreground: 0 0% 95%; /* Bright white text */
+
+    --card: 0 0% 3%; /* Very dark cards */
+    --card-foreground: 0 0% 95%; /* White text */
+
+    --popover: 0 0% 3%; /* Very dark popover */
+    --popover-foreground: 0 0% 95%; /* White text */
+
+    --primary: 0 100% 50%; /* Bright red accent */
+    --primary-foreground: 0 0% 0%; /* Black text on red */
+
+    --secondary: 0 0% 8%; /* Dark secondary */
+    --secondary-foreground: 0 0% 95%; /* White text */
+
+    --muted: 0 0% 8%; /* Dark muted */
+    --muted-foreground: 0 0% 65%; /* Medium gray text */
+
+    --accent: 0 100% 50%; /* Bright red accent */
+    --accent-foreground: 0 0% 0%; /* Black text on red */
+
+    --destructive: 0 100% 60%; /* Bright red destructive */
+    --destructive-foreground: 0 0% 0%; /* Black text */
+
+    --border: 0 0% 15%; /* Dark borders */
+    --input: 0 0% 8%; /* Dark input background */
+    --ring: 0 100% 50%; /* Red focus ring */
+
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background: hsl(var(--background));
+    min-height: 100vh;
+    font-family: 'Inter', 'Sora', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Sora for headings and special text */
+  h1, h2, h3, h4, h5, h6, .font-sora {
+    font-family: 'Sora', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  /* Button variants with proper AMOLED theme */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-primary/50;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-2 focus:ring-primary/50;
+  }
+  
+  .btn-outline {
+    @apply border border-red-500/30 text-foreground hover:bg-red-500/10 hover:border-red-500/50 focus:ring-2 focus:ring-red-500/50;
+  }
+  
+  .btn-destructive {
+    @apply bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:ring-2 focus:ring-destructive/50;
+  }
+  
+  .btn-ghost {
+    @apply text-foreground hover:bg-red-500/10 hover:text-red-500 focus:ring-2 focus:ring-red-500/50;
+  }
+  
+  /* Card components */
+  .card {
+    @apply bg-card text-card-foreground border border-red-500/20 shadow-lg;
+  }
+  
+  .card-hover {
+    @apply hover:border-red-500/40 hover:shadow-xl transition-all duration-200;
+  }
+  
+  /* Input components */
+  .input {
+    @apply bg-input border border-red-500/20 text-foreground placeholder:text-muted-foreground;
+    @apply focus:border-red-500/50 focus:ring-2 focus:ring-red-500/50;
+  }
+  
+  /* Navigation */
+  .nav-item {
+    @apply text-foreground hover:text-red-500 hover:bg-red-500/10 transition-all duration-200;
+  }
+  
+  .nav-item-active {
+    @apply text-red-500 bg-red-500/10;
+  }
+  
+  /* Media cards */
+  .media-card {
+    @apply bg-card border border-red-500/20 shadow-lg hover:border-red-500/40 hover:shadow-xl transition-all duration-200;
+  }
+  
+  .media-card-hover {
+    @apply hover:scale-[1.02] hover:shadow-2xl;
+  }
+  
+  /* Glass effects */
+  .glass {
+    @apply bg-card/95 backdrop-blur-sm border border-red-500/20;
+  }
+  
+  /* Status badges */
+  .status-watching {
+    @apply bg-red-500/20 text-red-500 border border-red-500/30;
+  }
+  
+  .status-completed {
+    @apply bg-green-500/20 text-green-500 border border-green-500/30;
+  }
+  
+  .status-planning {
+    @apply bg-blue-500/20 text-blue-500 border border-blue-500/30;
+  }
+  
+  .status-dropped {
+    @apply bg-gray-500/20 text-gray-500 border border-gray-500/30;
+  }
+  
+  /* Progress bars */
+  .progress-bar {
+    @apply bg-red-500/20 border border-red-500/30;
+  }
+  
+  .progress-fill {
+    @apply bg-red-500;
+  }
+  
+  /* Loading states */
+  .loading-skeleton {
+    @apply bg-muted animate-pulse;
+  }
+  
+  /* Focus states */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 focus:ring-offset-background;
+  }
+  
+  /* Hover states */
+  .hover-lift {
+    @apply hover:transform hover:scale-105 hover:shadow-lg transition-all duration-200;
+  }
+  
+  .hover-glow {
+    @apply hover:shadow-red-500/25 hover:shadow-lg transition-all duration-200;
+  }
+}
+
+@layer utilities {
+  /* Text colors */
+  .text-red-accent {
+    color: hsl(0 100% 50%);
+  }
+  
+  .text-red-accent-light {
+    color: hsl(0 100% 60%);
+  }
+  
+  /* Background colors */
+  .bg-red-accent {
+    background-color: hsl(0 100% 50%);
+  }
+  
+  .bg-red-accent-light {
+    background-color: hsl(0 100% 60%);
+  }
+  
+  .bg-red-accent-dark {
+    background-color: hsl(0 100% 40%);
+  }
+  
+  /* Border colors */
+  .border-red-accent {
+    border-color: hsl(0 100% 50%);
+  }
+  
+  .border-red-accent-light {
+    border-color: hsl(0 100% 60%);
+  }
+  
+  /* Shadows */
+  .shadow-red {
+    box-shadow: 0 4px 6px -1px hsl(0 100% 50% / 0.1), 0 2px 4px -1px hsl(0 100% 50% / 0.06);
+  }
+  
+  .shadow-red-lg {
+    box-shadow: 0 10px 15px -3px hsl(0 100% 50% / 0.1), 0 4px 6px -2px hsl(0 100% 50% / 0.05);
+  }
+  
+  /* Gradients */
+  .gradient-red {
+    background: linear-gradient(135deg, hsl(0 100% 50%), hsl(0 100% 40%));
+  }
+  
+  .gradient-red-dark {
+    background: linear-gradient(135deg, hsl(0 100% 40%), hsl(0 100% 30%));
+  }
+  
+  /* Animations */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
+  }
+}
+
+/* Keyframe animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0; 
+    transform: scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+/* Image quality optimizations */
+img {
+  image-rendering: auto;
+  image-rendering: smooth;
+}
+
+.anime-card img,
+.media-card img {
+  image-rendering: auto;
+  image-rendering: smooth;
+  image-rendering: -webkit-optimize-contrast;
+  min-height: 256px;
+  aspect-ratio: 3/4;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(0 0% 8%);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(0 100% 50% / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(0 100% 50% / 0.5);
+}
+
+/* Selection styling */
+::selection {
+  background: hsl(0 100% 50% / 0.3);
+  color: hsl(0 0% 95%);
+}
+
+/* Focus visible styling */
+:focus-visible {
+  outline: 2px solid hsl(0 100% 50%);
+  outline-offset: 2px;
+}
