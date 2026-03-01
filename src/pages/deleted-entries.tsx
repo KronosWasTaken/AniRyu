@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Trash2, RotateCcw, PlayCircle, BookOpen, Calendar, Star, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'motion/react';
-import { animeApi, mangaApi } from '@/services/api';
+import { API_BASE_URL, animeApi, mangaApi } from '@/services/api';
 
 interface DeletedEntry {
   id: number;
@@ -40,14 +40,14 @@ function DeletedEntries() {
   const fetchDeletedEntries = async () => {
     setIsLoading(true);
     try {
-      const animeResponse = await fetch('http://localhost:3001/api/anime/deleted');
+      const animeResponse = await fetch(`${API_BASE_URL}/anime/deleted`);
       if (animeResponse.ok) {
         const animeData = await animeResponse.json();
         console.log('Deleted anime data:', animeData);
         setDeletedAnime(animeData.data || []);
       }
 
-      const mangaResponse = await fetch('http://localhost:3001/api/manga/deleted');
+      const mangaResponse = await fetch(`${API_BASE_URL}/manga/deleted`);
       if (mangaResponse.ok) {
         const mangaData = await mangaResponse.json();
         console.log('Deleted manga data:', mangaData);
@@ -55,9 +55,13 @@ function DeletedEntries() {
       }
     } catch (error) {
       console.error('Failed to fetch deleted entries:', error);
+      const message = error instanceof Error ? error.message : 'Network error.';
+      const errorMessage = /network/i.test(message)
+        ? 'Backend is offline — start the server and refresh.'
+        : 'Failed to load deleted entries';
       toast({
         title: "Error",
-        description: "Failed to load deleted entries",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -69,7 +73,7 @@ function DeletedEntries() {
     setRestoringIds(prev => new Set(prev).add(entry.media_id));
     
     try {
-      const response = await fetch(`http://localhost:3001/api/${type}/restore`, {
+      const response = await fetch(`${API_BASE_URL}/${type}/restore`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

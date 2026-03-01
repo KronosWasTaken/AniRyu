@@ -1,4 +1,11 @@
-const API_BASE_URL = 'http://localhost:3001/api';
+const ENV_API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined;
+const DEFAULT_API_BASE_URL = import.meta.env.DEV
+  ? 'http://localhost:3001/api'
+  : typeof window !== 'undefined'
+    ? `${window.location.origin}/api`
+    : '/api';
+
+export const API_BASE_URL = ENV_API_BASE_URL || DEFAULT_API_BASE_URL;
 
 interface ApiResponse<T> {
   data?: T;
@@ -76,6 +83,13 @@ export const animeApi = {
     });
   },
 
+  async addManualMedia(payload: any) {
+    return apiRequest('/manual_media', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
   async permanentlyDelete(mediaId: number) {
     return apiRequest('/anime/permanent', {
       method: 'DELETE',
@@ -126,6 +140,13 @@ export const mangaApi = {
     });
   },
 
+  async addManualMedia(payload: any) {
+    return apiRequest('/manual_media', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
   async permanentlyDelete(mediaId: number) {
     return apiRequest('/manga/permanent', {
       method: 'DELETE',
@@ -141,6 +162,14 @@ export const searchApi = {
   
   async checkExists(mediaId: number, type: 'anime' | 'manga') {
     return apiRequest(`/check_exists?media_id=${mediaId}&type=${type}`);
+  },
+};
+
+export const adminApi = {
+  async resetDatabase() {
+    return apiRequest('/reset', {
+      method: 'DELETE',
+    });
   },
 };
 

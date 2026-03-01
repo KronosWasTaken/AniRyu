@@ -17,7 +17,10 @@ function Navigation() {
     <nav className="bg-background/95 backdrop-blur-md border-b border-red-500/20 fixed top-0 left-0 right-0 z-50 h-14 sm:h-16">
       <div className="container mx-auto px-3 sm:px-6 h-full">
         <div className="flex items-center justify-between h-full">
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          <Link
+            to="/"
+            className="flex items-center space-x-2 sm:space-x-3 hover:opacity-90 transition-opacity"
+          >
             <div className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center">
               <img 
                 src="/aniryu.png" 
@@ -29,7 +32,7 @@ function Navigation() {
             <h1 className="text-sm sm:text-lg font-semibold text-foreground tracking-tight font-sora">
               AniRyu {/* Force refresh - v2 */}
             </h1>
-          </div>
+          </Link>
           
           <div className="flex items-center space-x-1 overflow-x-auto flex-1 justify-end ml-2">
             {navItems.map((item) => {

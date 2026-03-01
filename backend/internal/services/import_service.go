@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"anilist-backend/internal/models"
@@ -232,7 +233,7 @@ func (s *importService) importMediaListWithCombinedProgress(_ context.Context, _
 			anime := &models.Anime{
 				MediaID:  entry.MediaID,
 				Title:    s.getBestTitle(entry.Media.Title),
-				Status:   s.mapAniListStatus(entry.Status),
+				Status:   s.mapAniListStatus(entry.Status, mediaType),
 				Score:    int(entry.Score),
 				Progress: entry.Progress,
 				Total:    s.getIntValue(entry.Media.Episodes),
@@ -256,9 +257,9 @@ func (s *importService) importMediaListWithCombinedProgress(_ context.Context, _
 			manga := &models.Manga{
 				MediaID:  entry.MediaID,
 				Title:    s.getBestTitle(entry.Media.Title),
-				Status:   s.mapAniListStatus(entry.Status),
+				Status:   s.mapAniListStatus(entry.Status, mediaType),
 				Score:    int(entry.Score),
-				Progress: entry.ProgressVolumes,
+				Progress: entry.Progress,
 				Total:    s.getIntValue(entry.Media.Chapters),
 				Image:    entry.Media.CoverImage.ExtraLarge,
 				Notes:    entry.Notes,
@@ -300,7 +301,7 @@ func (s *importService) importMediaList(ctx context.Context, username string, me
 			anime := &models.Anime{
 				MediaID:  entry.MediaID,
 				Title:    s.getBestTitle(entry.Media.Title),
-				Status:   s.mapAniListStatus(entry.Status),
+				Status:   s.mapAniListStatus(entry.Status, mediaType),
 				Score:    int(entry.Score),
 				Progress: entry.Progress,
 				Total:    s.getIntValue(entry.Media.Episodes),
@@ -330,9 +331,9 @@ func (s *importService) importMediaList(ctx context.Context, username string, me
 			manga := &models.Manga{
 				MediaID:  entry.MediaID,
 				Title:    s.getBestTitle(entry.Media.Title),
-				Status:   s.mapAniListStatus(entry.Status),
+				Status:   s.mapAniListStatus(entry.Status, mediaType),
 				Score:    int(entry.Score),
-				Progress: entry.ProgressVolumes, // Use progressVolumes for manga
+				Progress: entry.Progress,
 				Total:    s.getIntValue(entry.Media.Chapters),
 				Image:    entry.Media.CoverImage.ExtraLarge,
 				Notes:    entry.Notes,
@@ -454,9 +455,12 @@ func (s *importService) getBestTitle(title struct {
 	return title.Native
 }
 
-func (s *importService) mapAniListStatus(status string) models.Status {
-	switch status {
+func (s *importService) mapAniListStatus(status string, mediaType string) models.Status {
+	switch strings.ToUpper(status) {
 	case "CURRENT":
+		if strings.EqualFold(mediaType, "MANGA") {
+			return models.StatusReading
+		}
 		return models.StatusWatching
 	case "PLANNING":
 		return models.StatusPlanning
@@ -466,6 +470,8 @@ func (s *importService) mapAniListStatus(status string) models.Status {
 		return models.StatusDropped
 	case "PAUSED":
 		return models.StatusOnHold
+	case "REPEATING":
+		return models.StatusRepeating
 	default:
 		return models.StatusPlanning
 	}

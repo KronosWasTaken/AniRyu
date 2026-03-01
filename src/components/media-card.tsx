@@ -1,10 +1,22 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, Edit, Trash2, ExternalLink } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Star, Edit, Trash2, ExternalLink, MoreHorizontal } from 'lucide-react';
 import { Entry } from '@/types';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { BulkSelectCheckbox } from '@/components/bulk-select-checkbox';
 
 interface MediaCardProps {
@@ -38,6 +50,7 @@ function MediaCard({
   onToggleSelection,
   showBulkSelect = false
 }: MediaCardProps) {
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const progressText = entry.type === 'anime'
     ? `${entry.progress}${entry.totalEpisodes ? `/${entry.totalEpisodes}` : ''} episodes watched`
     : `${entry.progress}${entry.totalChapters ? `/${entry.totalChapters}` : ''} chapters read`;
@@ -146,52 +159,63 @@ function MediaCard({
 
         {/* Actions */}
         <motion.div 
-          className="w-12 sm:w-16 flex-shrink-0 flex justify-center space-x-1"
+          className="w-12 sm:w-16 flex-shrink-0 flex justify-center"
           initial={{ opacity: 0 }}
           whileHover={{ opacity: 1 }}
           transition={{ duration: 0.15, ease: "easeOut" }}
           style={{ willChange: "opacity" }}
           onClick={(e) => e.stopPropagation()}
         >
-          <AnimatePresence>
-            {onEdit && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.1, ease: "easeOut" }}
-                style={{ willChange: "transform, opacity" }}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="xs"
+                variant="ghost"
+                className="h-6 w-6 sm:h-7 sm:w-7 p-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 hover:bg-accent/80"
               >
-                <Button
-                  size="xs"
-                  variant="ghost"
-                  className="h-5 w-5 sm:h-6 sm:w-6 p-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 hover:bg-accent/80"
-                  onClick={() => onEdit(entry)}
+                <MoreHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {onEdit && (
+                <DropdownMenuItem onClick={() => onEdit(entry)}>
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit
+                </DropdownMenuItem>
+              )}
+              {onDelete && (
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => setIsDeleteDialogOpen(true)}
                 >
-                  <Edit className="w-2 h-2 sm:w-3 sm:h-3" />
-                </Button>
-              </motion.div>
-            )}
-            {onDelete && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.1, delay: 0.05, ease: "easeOut" }}
-                style={{ willChange: "transform, opacity" }}
-              >
-                <Button
-                  size="xs"
-                  variant="ghost"
-                  className="h-5 w-5 sm:h-6 sm:w-6 p-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </motion.div>
+        {onDelete && (
+          <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete {entry.title}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action will move this entry to deleted entries. You can restore it later.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                   onClick={() => onDelete(entry.id)}
                 >
-                  <Trash2 className="w-2 h-2 sm:w-3 sm:h-3" />
-                </Button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </motion.div>
     );
   }
@@ -247,55 +271,62 @@ function MediaCard({
         
         <motion.div 
           className="absolute top-2 right-2"
-          initial={{ opacity: 0 }}
-          whileHover={{ opacity: 1 }}
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.15, ease: "easeOut" }}
           style={{ willChange: "opacity" }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex space-x-1">
-            <AnimatePresence>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="xs"
+                variant="secondary"
+                className="h-8 w-8 p-0 bg-background/90 backdrop-blur-sm shadow-sm hover:shadow-md"
+              >
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
               {onEdit && (
-                <motion.div
-                  key="edit-button"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.1, ease: "easeOut" }}
-                  style={{ willChange: "transform, opacity" }}
-                >
-                  <Button
-                    size="xs"
-                    variant="secondary"
-                    className="h-8 w-8 p-0 bg-background/90 backdrop-blur-sm shadow-sm hover:shadow-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
-                    onClick={() => onEdit(entry)}
-                  >
-                    <Edit className="w-3 h-3" />
-                  </Button>
-                </motion.div>
+                <DropdownMenuItem onClick={() => onEdit(entry)}>
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit
+                </DropdownMenuItem>
               )}
               {onDelete && (
-                <motion.div
-                  key="delete-button"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.1, delay: 0.05, ease: "easeOut" }}
-                  style={{ willChange: "transform, opacity" }}
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => setIsDeleteDialogOpen(true)}
                 >
-                  <Button
-                    size="xs"
-                    variant="destructive"
-                    className="h-8 w-8 p-0 bg-destructive/90 backdrop-blur-sm shadow-sm hover:shadow-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
-                    onClick={() => onDelete(entry.id)}
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
-                </motion.div>
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
               )}
-            </AnimatePresence>
-          </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </motion.div>
+        {onDelete && (
+          <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete {entry.title}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action will move this entry to deleted entries. You can restore it later.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={() => onDelete(entry.id)}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
 
       <CardHeader 

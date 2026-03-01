@@ -1,8 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   BarChart3, 
@@ -16,7 +15,6 @@ import {
 } from 'lucide-react';
 import { useAnimeApi, useMangaApi } from '@/hooks/use-api';
 import { cn } from '@/lib/utils';
-import { Link } from 'react-router-dom';
 
 interface StatCardProps {
   title: string;

@@ -4,8 +4,22 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, Download, CheckCircle, AlertCircle, ExternalLink } from 'lucide-react';
+import { Loader2, Download, CheckCircle, AlertCircle, ExternalLink, Trash2, FileText } from 'lucide-react';
 import { motion } from 'motion/react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { API_BASE_URL, adminApi } from '@/services/api';
+import { useAnimeApi, useMangaApi } from '@/hooks/use-api';
+import { useToast } from '@/hooks/use-toast';
 
 interface ImportProgress {
   type: string;
@@ -25,6 +39,10 @@ function Import() {
   } | null>(null);
   const [progress, setProgress] = useState<ImportProgress | null>(null);
   const [progressLog, setProgressLog] = useState<string[]>([]);
+  const [isResetting, setIsResetting] = useState(false);
+  const { animeList } = useAnimeApi();
+  const { mangaList } = useMangaApi();
+  const { toast } = useToast();
 
   const handleImport = async () => {
     if (!username.trim()) {
@@ -41,7 +59,7 @@ function Import() {
     setProgressLog([]);
 
     try {
-      const response = await fetch('http://localhost:3001/api/import/progress', {
+      const response = await fetch(`${API_BASE_URL}/import/progress`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -96,9 +114,13 @@ function Import() {
         }
       }
     } catch (error) {
+      const message = error instanceof Error ? error.message : 'Network error.';
+      const friendlyMessage = /network/i.test(message)
+        ? 'Backend is offline — start the server and refresh.'
+        : message;
       setImportResult({
         success: false,
-        message: error instanceof Error ? error.message : 'Network error. Make sure the backend is running.',
+        message: friendlyMessage,
       });
     } finally {
       setIsImporting(false);
@@ -109,6 +131,97 @@ function Import() {
     if (e.key === 'Enter' && !isImporting) {
       handleImport();
     }
+  };
+
+  const formatCsvValue = (value: string | number | null | undefined) => {
+    const safeValue = value ?? '';
+    const stringValue = String(safeValue);
+    if (/[,\n"]/u.test(stringValue)) {
+      return `"${stringValue.replace(/"/gu, '""')}"`;
+    }
+    return stringValue;
+  };
+
+  const buildCsv = (rows: { name: string; score: number | string; status: string }[]) => {
+    const header = ['name', 'score', 'status'];
+    const lines = rows.map((row) => [
+      formatCsvValue(row.name),
+      formatCsvValue(row.score),
+      formatCsvValue(row.status),
+    ].join(','));
+    return [header.join(','), ...lines].join('\n');
+  };
+
+  const downloadCsv = (rows: { name: string; score: number | string; status: string }[], filename: string) => {
+    const csv = buildCsv(rows);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const statusOrder = new Map<string, number>([
+    ['watching', 1],
+    ['completed', 2],
+    ['on-hold', 3],
+    ['dropped', 4],
+    ['plan-to-watch', 5],
+    ['reading', 1],
+    ['plan-to-read', 5],
+  ]);
+
+  const sortByStatusOrder = (a: { status?: string }, b: { status?: string }) => {
+    const aOrder = statusOrder.get(a.status ?? '') ?? Number.MAX_SAFE_INTEGER;
+    const bOrder = statusOrder.get(b.status ?? '') ?? Number.MAX_SAFE_INTEGER;
+    if (aOrder !== bOrder) return aOrder - bOrder;
+    return String(a.status ?? '').localeCompare(String(b.status ?? ''));
+  };
+
+  const handleExportAnime = () => {
+    if (!Array.isArray(animeList)) return;
+    const rows = [...animeList]
+      .sort(sortByStatusOrder)
+      .map((anime: any) => ({
+        name: anime.title,
+        score: anime.score ?? '',
+        status: anime.status ?? '',
+      }));
+    downloadCsv(rows, 'anime-scores.csv');
+  };
+
+  const handleExportManga = () => {
+    if (!Array.isArray(mangaList)) return;
+    const rows = [...mangaList]
+      .sort(sortByStatusOrder)
+      .map((manga: any) => ({
+        name: manga.title,
+        score: manga.score ?? '',
+        status: manga.status ?? '',
+      }));
+    downloadCsv(rows, 'manga-scores.csv');
+  };
+
+  const handleResetDatabase = async () => {
+    setIsResetting(true);
+    const response = await adminApi.resetDatabase();
+    if (response.error) {
+      toast({
+        title: 'Reset failed',
+        description: response.error,
+        variant: 'destructive',
+      });
+      setIsResetting(false);
+      return;
+    }
+
+    toast({
+      title: 'Database cleared',
+      description: 'Your anime and manga lists were removed. Re-import to restore data.',
+    });
+    setIsResetting(false);
   };
 
   return (
@@ -230,6 +343,50 @@ function Import() {
                 </AlertDescription>
               </Alert>
             )}
+
+            <div className="border border-border/60 rounded-lg p-4 space-y-4 bg-card/60">
+              <div className="space-y-1">
+                <h3 className="font-semibold">Data Management</h3>
+                <p className="text-sm text-muted-foreground">
+                  Export your lists or clear all local data before a fresh import.
+                </p>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Button variant="outline" size="sm" onClick={handleExportAnime}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Export Anime CSV
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleExportManga}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Export Manga CSV
+                </Button>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm" className="w-full sm:w-auto" disabled={isResetting}>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    {isResetting ? 'Deleting...' : 'Delete Database'}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete all data?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete all anime and manga entries from AniRyu. You can re-import from AniList afterward.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      onClick={handleResetDatabase}
+                    >
+                      Delete Database
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
 
             <div className="bg-muted/50 p-4 rounded-lg">
               <h3 className="font-semibold mb-2">What gets imported?</h3>

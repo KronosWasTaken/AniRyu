@@ -38,8 +38,10 @@ func main() {
 	importHandler := handlers.NewImportHandler(importService)
 	editHandler := handlers.NewEditHandler(animeRepo, mangaRepo)
 	addMediaHandler := handlers.NewAddMediaHandler(animeService, mangaService, anilistService)
+	manualMediaHandler := handlers.NewManualMediaHandler(animeRepo, mangaRepo)
+	resetHandler := handlers.NewResetHandler(db)
 
-	router := setupRouter(cfg, animeHandler, mangaHandler, searchHandler, importHandler, editHandler, addMediaHandler)
+	router := setupRouter(cfg, animeHandler, mangaHandler, searchHandler, importHandler, editHandler, addMediaHandler, manualMediaHandler, resetHandler)
 
 	addr := cfg.Server.Host + ":" + cfg.Server.Port
 	log.Printf("Starting server on %s", addr)
@@ -48,7 +50,7 @@ func main() {
 	}
 }
 
-func setupRouter(cfg *config.Config, animeHandler *handlers.AnimeHandler, mangaHandler *handlers.MangaHandler, searchHandler *handlers.SearchHandler, importHandler *handlers.ImportHandler, editHandler *handlers.EditHandler, addMediaHandler *handlers.AddMediaHandler) *gin.Engine {
+func setupRouter(cfg *config.Config, animeHandler *handlers.AnimeHandler, mangaHandler *handlers.MangaHandler, searchHandler *handlers.SearchHandler, importHandler *handlers.ImportHandler, editHandler *handlers.EditHandler, addMediaHandler *handlers.AddMediaHandler, manualMediaHandler *handlers.ManualMediaHandler, resetHandler *handlers.ResetHandler) *gin.Engine {
 	if cfg.Server.Environment == "production" {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -95,6 +97,8 @@ func setupRouter(cfg *config.Config, animeHandler *handlers.AnimeHandler, mangaH
 		api.GET("/check_exists", searchHandler.CheckExists)
 
 		api.POST("/add_media", addMediaHandler.AddMedia)
+		api.POST("/manual_media", manualMediaHandler.AddManualMedia)
+		api.DELETE("/reset", resetHandler.ResetDatabase)
 
 		api.POST("/import", importHandler.ImportUserList)
 		api.POST("/import/progress", importHandler.ImportUserListWithProgress)

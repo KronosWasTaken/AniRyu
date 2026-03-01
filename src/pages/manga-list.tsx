@@ -2,6 +2,16 @@ import { useState, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Slider } from '@/components/ui/slider';
 import MediaCard from '@/components/media-card';
 import EmptyState from '@/components/empty-state';
 import SyncStatus from '@/components/sync-status';
@@ -11,6 +21,7 @@ import { LoadingSkeleton } from '@/components/loading-skeleton';
 import { BulkActions } from '@/components/bulk-actions';
 import { useBulkSelect } from '@/hooks/use-bulk-select';
 import { useMangaApi } from '@/hooks/use-api';
+import { useLocalStorage } from '@/hooks/use-local-storage';
 import { MangaEntry, MangaStatus } from '@/types';
 import { Search, Filter, Grid, List, AlertCircle, Loader2, Download, RefreshCw, Trash2, BarChart3, CheckSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -29,10 +40,65 @@ function MangaList() {
     field: 'title',
     direction: 'asc'
   });
+  const [gridColumns, setGridColumns] = useLocalStorage('aniryu-manga-grid-columns', 4);
   const [editingEntry, setEditingEntry] = useState<MangaEntry | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [showBulkSelect, setShowBulkSelect] = useState(false);
   const { toast } = useToast();
+
+  const statusCounts = useMemo(() => {
+    if (!Array.isArray(mangaList)) {
+      return {
+        total: 0,
+        reading: 0,
+        completed: 0,
+        onHold: 0,
+        dropped: 0,
+        planToRead: 0,
+      };
+    }
+
+    return mangaList.reduce(
+      (counts: {
+        total: number;
+        reading: number;
+        completed: number;
+        onHold: number;
+        dropped: number;
+        planToRead: number;
+      }, manga: any) => {
+        counts.total += 1;
+        switch (manga.status) {
+          case 'reading':
+            counts.reading += 1;
+            break;
+          case 'completed':
+            counts.completed += 1;
+            break;
+          case 'on-hold':
+            counts.onHold += 1;
+            break;
+          case 'dropped':
+            counts.dropped += 1;
+            break;
+          case 'plan-to-read':
+            counts.planToRead += 1;
+            break;
+          default:
+            break;
+        }
+        return counts;
+      },
+      {
+        total: 0,
+        reading: 0,
+        completed: 0,
+        onHold: 0,
+        dropped: 0,
+        planToRead: 0,
+      }
+    );
+  }, [mangaList]);
 
   const filteredManga = useMemo(() => {
     if (!Array.isArray(mangaList)) return [];
@@ -166,13 +232,18 @@ function MangaList() {
   }
 
   if (error) {
+    const isOffline = /network/i.test(error);
+    const errorMessage = isOffline
+      ? 'Backend is offline — start the server and refresh.'
+      : error;
+
     return (
       <div className="container mx-auto px-4 py-8 space-y-6">
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Failed to load manga list</h3>
-            <p className="text-muted-foreground mb-4">{error}</p>
+            <p className="text-muted-foreground mb-4">{errorMessage}</p>
             <Button onClick={() => window.location.reload()}>
               Try Again
             </Button>
@@ -192,16 +263,26 @@ function MangaList() {
     >
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-xl sm:text-2xl font-semibold text-foreground tracking-tight font-sora">
-              My Manga List
-            </h1>
-            <Button asChild variant="outline" size="sm" className="transition-all duration-200 hover:shadow-sm">
-              <Link to="/deleted" className="flex items-center space-x-2">
-                <Trash2 className="w-4 h-4" />
-                <span>Deleted Entries</span>
-              </Link>
-            </Button>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center space-x-4">
+              <h1 className="text-xl sm:text-2xl font-semibold text-foreground tracking-tight font-sora">
+                My Manga List
+              </h1>
+              <Button asChild variant="outline" size="sm" className="transition-all duration-200 hover:shadow-sm">
+                <Link to="/deleted" className="flex items-center space-x-2">
+                  <Trash2 className="w-4 h-4" />
+                  <span>Deleted Entries</span>
+                </Link>
+              </Button>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="secondary">Total: {statusCounts.total}</Badge>
+              <Badge variant="outline">Reading: {statusCounts.reading}</Badge>
+              <Badge variant="outline">Completed: {statusCounts.completed}</Badge>
+              <Badge variant="outline">On Hold: {statusCounts.onHold}</Badge>
+              <Badge variant="outline">Dropped: {statusCounts.dropped}</Badge>
+              <Badge variant="outline">Plan to Read: {statusCounts.planToRead}</Badge>
+            </div>
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -241,6 +322,41 @@ function MangaList() {
             >
               <List className="w-4 h-4" />
             </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="transition-smooth"
+                >
+                  Grid Settings
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Grid Settings</DialogTitle>
+                  <DialogDescription>
+                    Adjust how many cards appear per row in grid view.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between text-sm font-medium">
+                    <span>Columns</span>
+                    <span>{gridColumns}</span>
+                  </div>
+                  <Slider
+                    min={2}
+                    max={8}
+                    step={1}
+                    value={[gridColumns]}
+                    onValueChange={(value) => setGridColumns(value[0])}
+                  />
+                  <div className="text-xs text-muted-foreground">
+                    Use more columns for a denser grid.
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
@@ -330,9 +446,10 @@ function MangaList() {
           <div className={cn(
             "animate-fade-in",
             viewMode === 'grid' 
-              ? "grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5"
+              ? "grid gap-3 sm:gap-4"
               : "bg-card/50 rounded-lg border border-border/50"
-          )}>
+          )}
+          style={viewMode === 'grid' ? { gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))` } : undefined}>
             {filteredManga.map((manga, index) => (
               <MediaCard
                 key={`manga-${manga.media_id}-${index}`}
