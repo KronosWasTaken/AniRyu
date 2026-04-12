@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -33,11 +33,7 @@ function DeletedEntries() {
   const [restoringIds, setRestoringIds] = useState<Set<number>>(new Set());
   const [permanentlyDeletingIds, setPermanentlyDeletingIds] = useState<Set<number>>(new Set());
 
-  useEffect(() => {
-    fetchDeletedEntries();
-  }, []);
-
-  const fetchDeletedEntries = async () => {
+  const fetchDeletedEntries = useCallback(async () => {
     setIsLoading(true);
     try {
       const animeResponse = await fetch(`${API_BASE_URL}/anime/deleted`);
@@ -67,7 +63,11 @@ function DeletedEntries() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchDeletedEntries();
+  }, [fetchDeletedEntries]);
 
   const handleRestore = async (entry: DeletedEntry, type: 'anime' | 'manga') => {
     setRestoringIds(prev => new Set(prev).add(entry.media_id));

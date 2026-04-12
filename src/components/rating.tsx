@@ -58,7 +58,7 @@ export function Rating({
           onMouseLeave={handleMouseLeave}
           disabled={disabled}
           className={cn(
-            "transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded-sm",
+            "transition-colors duration-150 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-primary rounded-sm",
             disabled ? "cursor-not-allowed" : "cursor-pointer",
             sizeClasses[size]
           )}

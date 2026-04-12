@@ -76,28 +76,24 @@ function AddEntry() {
 
   const offlineTabValue = `offline-${mediaType}`;
 
-  const debouncedSearch = useCallback(
-    (() => {
-      let timeoutId: NodeJS.Timeout;
-      return (query: string) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          if (query.trim()) {
-            handleSearch(query);
-          } else {
-            setSearchResults([]);
-          }
-        }, 300); // 300ms delay like xenylist
-      };
-    })(),
-    [mediaType]
-  );
+  const checkExistingEntries = useCallback(async (results: SearchResult[]) => {
+    const existingSet = new Set<number>();
+    
+    for (const result of results) {
+      try {
+        const response = await searchApi.checkExists(result.id, mediaType);
+        if (response.data && typeof response.data === 'object' && 'exists' in response.data && response.data.exists) {
+          existingSet.add(result.id);
+        }
+      } catch (error) {
+        console.error('Failed to check if entry exists:', error);
+      }
+    }
+    
+    setExistingEntries(existingSet);
+  }, [mediaType]);
 
-  useEffect(() => {
-    debouncedSearch(searchQuery);
-  }, [searchQuery, debouncedSearch]);
-
-  const handleSearch = async (query: string) => {
+  const handleSearch = useCallback(async (query: string) => {
     if (!query.trim()) return;
     
     setIsSearching(true);
@@ -140,24 +136,20 @@ function AddEntry() {
     } finally {
       setIsSearching(false);
     }
-  };
+  }, [mediaType, toast, checkExistingEntries]);
 
-  const checkExistingEntries = async (results: SearchResult[]) => {
-    const existingSet = new Set<number>();
-    
-    for (const result of results) {
-      try {
-        const response = await searchApi.checkExists(result.id, mediaType);
-        if (response.data && typeof response.data === 'object' && 'exists' in response.data && response.data.exists) {
-          existingSet.add(result.id);
-        }
-      } catch (error) {
-        console.error('Failed to check if entry exists:', error);
-      }
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
     }
-    
-    setExistingEntries(existingSet);
-  };
+
+    const timer = setTimeout(() => {
+      handleSearch(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, handleSearch]);
 
   const handleSelectMedia = (media: SearchResult) => {
     setSelectedMedia(media);
@@ -383,7 +375,7 @@ function AddEntry() {
                                 }`}
                                 onClick={() => !existingEntries.has(result.id) && handleSelectMedia(result)}
                               >
-                                <div className="relative aspect-[3/4] rounded-lg overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300">
+                                <div className="relative aspect-3/4 rounded-lg overflow-hidden shadow-lg group-hover:shadow-xl transition-all duration-300">
                                   <img
                                     src={result.coverImage.extraLarge || result.coverImage.large}
                                     alt={result.title.english || result.title.romaji}
@@ -393,7 +385,7 @@ function AddEntry() {
                                   />
                                   
                                   {/* Overlay */}
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                  <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                   
                                   {/* Content Overlay */}
                                   <div className="absolute bottom-0 left-0 right-0 p-3 pb-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
@@ -423,7 +415,7 @@ function AddEntry() {
                                           <CheckCircle className="w-4 h-4 text-white" />
                                         </div>
                                       ) : (
-                                        <div className="flex items-center justify-center w-8 h-8 bg-black/50 backdrop-blur-sm rounded-full hover:bg-black/70 transition-colors">
+                                        <div className="flex items-center justify-center w-8 h-8 bg-black/50 backdrop-blur-xs rounded-full hover:bg-black/70 transition-colors">
                                           <Plus className="w-4 h-4 text-white" />
                                         </div>
                                       )}

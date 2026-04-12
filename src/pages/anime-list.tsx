@@ -192,7 +192,7 @@ function AnimeList() {
       }
       await refresh();
     } catch (error: any) {
-      throw new Error(error.message || 'Failed to update anime');
+      throw new Error(error.message || 'Failed to update anime', { cause: error });
     }
   };
 
@@ -268,7 +268,7 @@ function AnimeList() {
               <h1 className="text-xl sm:text-2xl font-semibold text-foreground tracking-tight font-sora">
                 My Anime List
               </h1>
-              <Button asChild variant="outline" size="sm" className="transition-all duration-200 hover:shadow-sm">
+              <Button asChild variant="outline" size="sm" className="transition-all duration-200 hover:shadow-xs">
                 <Link to="/deleted" className="flex items-center space-x-2">
                   <Trash2 className="w-4 h-4" />
                   <span>Deleted Entries</span>
@@ -290,40 +290,40 @@ function AnimeList() {
               size="sm"
               onClick={() => refresh()}
               disabled={isLoading}
-              className="transition-all duration-200 hover:shadow-sm"
+              className="transition-all duration-200 hover:shadow-xs"
             >
               <RefreshCw className={cn("w-4 h-4", isLoading && "animate-spin")} />
             </Button>
-            <Button asChild variant="outline" size="sm" className="transition-all duration-200 hover:shadow-sm">
+            <Button asChild variant="outline" size="sm" className="transition-all duration-200 hover:shadow-xs">
               <Link to="/statistics" className="flex items-center space-x-2">
                 <BarChart3 className="w-4 h-4" />
                 <span className="hidden sm:inline">Stats</span>
               </Link>
             </Button>
-            <Button asChild variant="outline" size="sm" className="transition-all duration-200 hover:shadow-sm hidden sm:flex">
+            <Button asChild variant="outline" size="sm" className="transition-all duration-200 hover:shadow-xs hidden sm:flex">
               <Link to="/import" className="flex items-center space-x-2">
                 <Download className="w-4 h-4" />
                 <span>Import</span>
               </Link>
             </Button>
-            <Button asChild variant="outline" size="sm" className="transition-all duration-200 hover:shadow-sm sm:hidden">
+            <Button asChild variant="outline" size="sm" className="transition-all duration-200 hover:shadow-xs sm:hidden">
               <Link to="/import" className="flex items-center">
                 <Download className="w-4 h-4" />
               </Link>
             </Button>
             <Button
-              variant={viewMode === 'grid' ? 'default' : 'outline'}
+              variant={viewMode === 'grid' ? 'default' : 'outline-solid'}
               size="sm"
               onClick={() => setViewMode('grid')}
-              className="transition-all duration-200 hover:shadow-sm"
+              className="transition-all duration-200 hover:shadow-xs"
             >
               <Grid className="w-4 h-4" />
             </Button>
             <Button
-              variant={viewMode === 'list' ? 'default' : 'outline'}
+              variant={viewMode === 'list' ? 'default' : 'outline-solid'}
               size="sm"
               onClick={() => setViewMode('list')}
-              className="transition-all duration-200 hover:shadow-sm"
+              className="transition-all duration-200 hover:shadow-xs"
             >
               <List className="w-4 h-4" />
             </Button>
@@ -332,7 +332,7 @@ function AnimeList() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="transition-all duration-200 hover:shadow-sm"
+                  className="transition-all duration-200 hover:shadow-xs"
                 >
                   Grid Settings
                 </Button>
@@ -397,7 +397,7 @@ function AnimeList() {
           />
 
           <Button
-            variant={showBulkSelect ? "default" : "outline"}
+            variant={showBulkSelect ? "default" : "outline-solid"}
             size="sm"
             onClick={() => {
               setShowBulkSelect(!showBulkSelect);
@@ -405,7 +405,7 @@ function AnimeList() {
                 bulkSelect.clearSelection();
               }
             }}
-            className="transition-all duration-200 hover:shadow-sm flex items-center space-x-2 h-9"
+            className="transition-all duration-200 hover:shadow-xs flex items-center space-x-2 h-9"
           >
             <CheckSquare className="w-4 h-4" />
             <span>{showBulkSelect ? "Exit Select" : "Select Multiple"}</span>
@@ -439,12 +439,12 @@ function AnimeList() {
           {viewMode === 'list' && (
             <div className="bg-card/50 rounded-lg border border-border/50 mb-4">
               <div className="flex items-center p-2 sm:p-3 border-b border-border/50 bg-muted/30">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 mr-2 sm:mr-3"></div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 mr-2 sm:mr-3"></div>
                 <div className="flex-1 min-w-0 mr-2 sm:mr-4 text-xs sm:text-sm font-medium text-muted-foreground">Title</div>
-                <div className="w-16 sm:w-20 flex-shrink-0 mr-2 sm:mr-4 text-xs sm:text-sm font-medium text-muted-foreground hidden sm:block">Status</div>
+                <div className="w-16 sm:w-20 shrink-0 mr-2 sm:mr-4 text-xs sm:text-sm font-medium text-muted-foreground hidden sm:block">Status</div>
                 <div className="w-12 sm:w-16 text-center mr-2 sm:mr-4 text-xs sm:text-sm font-medium text-muted-foreground">Progress</div>
                 <div className="w-8 sm:w-12 text-center mr-2 sm:mr-4 text-xs sm:text-sm font-medium text-muted-foreground">Score</div>
-                <div className="w-12 sm:w-16 flex-shrink-0 text-center text-xs sm:text-sm font-medium text-muted-foreground">Actions</div>
+                <div className="w-12 sm:w-16 shrink-0 text-center text-xs sm:text-sm font-medium text-muted-foreground">Actions</div>
               </div>
             </div>
           )}

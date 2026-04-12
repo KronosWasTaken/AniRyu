@@ -118,7 +118,7 @@ export function BulkActions({
                 disabled={!selectedStatus}
                 size="sm"
                 className={cn(
-                  "transition-all duration-200 hover:shadow-sm",
+                  "transition-all duration-200 hover:shadow-xs",
                   selectedStatus && "bg-red-600 hover:bg-red-700 text-white shadow-md"
                 )}
               >
@@ -144,7 +144,7 @@ export function BulkActions({
                 disabled={!selectedRating}
                 size="sm"
                 className={cn(
-                  "transition-all duration-200 hover:shadow-sm",
+                  "transition-all duration-200 hover:shadow-xs",
                   selectedRating && "bg-red-600 hover:bg-red-700 text-white shadow-md"
                 )}
               >
@@ -156,7 +156,7 @@ export function BulkActions({
               variant="destructive"
               size="sm"
               onClick={() => setShowDeleteDialog(true)}
-              className="transition-all duration-200 hover:shadow-sm"
+              className="transition-all duration-200 hover:shadow-xs"
             >
               <Trash2 className="w-4 h-4 mr-1" />
               Delete

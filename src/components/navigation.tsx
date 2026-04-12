@@ -46,9 +46,9 @@ function Navigation() {
                   variant={isActive ? "default" : "ghost"}
                   size="sm"
                   className={cn(
-                    "h-7 sm:h-8 px-2 sm:px-3 text-xs sm:text-sm font-medium flex-shrink-0",
+                    "h-7 sm:h-8 px-2 sm:px-3 text-xs sm:text-sm font-medium shrink-0",
                     isActive 
-                      ? "bg-red-500 text-black shadow-sm" 
+                      ? "bg-red-500 text-black shadow-xs" 
                       : "hover:bg-red-500/10 hover:text-red-500"
                   )}
                 >

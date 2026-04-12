@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -5,17 +6,18 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-red-500 text-black hover:bg-red-600 shadow-sm hover:shadow-red-500/25 hover:shadow-lg",
-        destructive: "bg-red-600 text-black hover:bg-red-700 shadow-sm hover:shadow-red-500/25 hover:shadow-lg",
-        outline: "border border-red-500/30 bg-transparent text-foreground hover:bg-red-500/10 hover:border-red-500/50 shadow-sm hover:shadow-red-500/25 hover:shadow-lg",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm hover:shadow-lg",
+        default: "bg-red-500 text-black hover:bg-red-600 shadow-xs hover:shadow-red-500/25 hover:shadow-lg",
+        destructive: "bg-red-600 text-black hover:bg-red-700 shadow-xs hover:shadow-red-500/25 hover:shadow-lg",
+        outline: "border border-red-500/30 bg-transparent text-foreground hover:bg-red-500/10 hover:border-red-500/50 shadow-xs hover:shadow-red-500/25 hover:shadow-lg",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-xs hover:shadow-lg",
         ghost: "text-foreground hover:bg-red-500/10 hover:text-red-500",
         link: "text-red-500 underline-offset-4 hover:underline hover:text-red-600",
         minimal: "bg-transparent border border-red-500/30 text-foreground hover:bg-red-500/10 hover:border-red-500/50",
+        "outline-solid": "bg-background border border-border shadow-xs hover:bg-accent hover:text-accent-foreground",
       },
       size: {
         default: "h-10 px-4 py-2",

@@ -75,7 +75,7 @@ function MediaCard({
         {/* Bulk Select Checkbox */}
         {showBulkSelect && (
           <div 
-            className="flex-shrink-0 mr-2"
+            className="shrink-0 mr-2"
             onClick={(e) => e.stopPropagation()}
           >
             <BulkSelectCheckbox
@@ -88,7 +88,7 @@ function MediaCard({
 
         {/* Cover Image */}
         <motion.div 
-          className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 mr-3 sm:mr-4"
+          className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 mr-3 sm:mr-4"
           whileHover={{ scale: 1.02 }}
           transition={{ duration: 0.15, ease: "easeOut" }}
           style={{ willChange: "transform" }}
@@ -97,12 +97,12 @@ function MediaCard({
             <img 
               src={entry.imageUrl} 
               alt={entry.title}
-              className="w-full h-full object-cover rounded-md shadow-sm"
+              className="w-full h-full object-cover rounded-md shadow-xs"
               loading="lazy"
               decoding="async"
             />
           ) : (
-            <div className="w-full h-full bg-muted rounded-md flex items-center justify-center shadow-sm">
+            <div className="w-full h-full bg-muted rounded-md flex items-center justify-center shadow-xs">
               <span className="text-xs text-muted-foreground">?</span>
             </div>
           )}
@@ -127,7 +127,7 @@ function MediaCard({
         </div>
 
         {/* Status */}
-        <div className="w-20 sm:w-24 flex-shrink-0 mr-2 sm:mr-4">
+        <div className="w-20 sm:w-24 shrink-0 mr-2 sm:mr-4">
           <Badge 
             variant="outline" 
             className={cn("text-xs font-medium", STATUS_COLORS.get(entry.status))}
@@ -159,7 +159,7 @@ function MediaCard({
 
         {/* Actions */}
         <motion.div 
-          className="w-12 sm:w-16 flex-shrink-0 flex justify-center"
+          className="w-12 sm:w-16 shrink-0 flex justify-center"
           initial={{ opacity: 0 }}
           whileHover={{ opacity: 1 }}
           transition={{ duration: 0.15, ease: "easeOut" }}
@@ -247,7 +247,7 @@ function MediaCard({
               itemId={entry.id}
               isSelected={isSelected}
               onToggle={onToggleSelection!}
-              className="bg-background/90 backdrop-blur-sm"
+              className="bg-background/90 backdrop-blur-xs"
             />
           </div>
         )}
@@ -282,7 +282,7 @@ function MediaCard({
               <Button
                 size="xs"
                 variant="secondary"
-                className="h-8 w-8 p-0 bg-background/90 backdrop-blur-sm shadow-sm hover:shadow-md"
+                className="h-8 w-8 p-0 bg-background/90 backdrop-blur-xs shadow-xs hover:shadow-md"
               >
                 <MoreHorizontal className="w-4 h-4" />
               </Button>

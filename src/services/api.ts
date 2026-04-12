@@ -12,6 +12,24 @@ interface ApiResponse<T> {
   error?: string;
 }
 
+export interface MediaFormData {
+  status: string;
+  rating?: string | number;
+  progress?: string | number;
+  notes?: string;
+  hiddenFromStatusLists?: boolean;
+}
+
+export interface MediaPayload {
+  media_id?: number;
+  media_type: string;
+  status?: string;
+  rating?: number;
+  progress?: number;
+  notes?: string;
+  hidden_from_status_lists?: boolean;
+}
+
 async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
@@ -76,14 +94,14 @@ export const animeApi = {
     });
   },
 
-  async editEntry(mediaId: number, updates: any) {
+  async editEntry(mediaId: number, updates: Partial<MediaPayload>) {
     return apiRequest(`/anime/${mediaId}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
   },
 
-  async addManualMedia(payload: any) {
+  async addManualMedia(payload: MediaPayload) {
     return apiRequest('/manual_media', {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -133,14 +151,14 @@ export const mangaApi = {
     });
   },
 
-  async editEntry(mediaId: number, updates: any) {
+  async editEntry(mediaId: number, updates: Partial<MediaPayload>) {
     return apiRequest(`/manga/${mediaId}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
   },
 
-  async addManualMedia(payload: any) {
+  async addManualMedia(payload: MediaPayload) {
     return apiRequest('/manual_media', {
       method: 'POST',
       body: JSON.stringify(payload),

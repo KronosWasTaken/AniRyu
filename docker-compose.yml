@@ -1,0 +1,13 @@
+services:
+  aniryu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PORT=3001
+      - DB_PATH=/app/data/aniryu.db
+      - GIN_MODE=release

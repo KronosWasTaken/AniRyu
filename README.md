@@ -40,6 +40,18 @@ A modern, full-stack application for tracking your anime and manga collection wi
 
 That's it! The application will start both the backend and frontend servers automatically.
 
+### Docker Setup (Recommended)
+The easiest way to run AniRyu is using Docker. This handles all dependencies (Node, Go, etc.) for you in a single command.
+
+1. **Install Docker Desktop** from [docker.com](https://www.docker.com/)
+2. **Run the application**:
+   ```powershell
+   docker compose up --build
+   ```
+3. **Access the app** at http://localhost:8080
+
+**Note**: Your data is automatically saved in the `./data` folder and will persist even if you stop or rebuild the container.
+
 ### Manual Setup
 If you prefer to run servers separately:
 
@@ -53,9 +65,9 @@ pnpm run dev
 ```
 
 ## 🌐 Access Points
-- **Frontend**: http://localhost:5173
+- **Frontend**: http://localhost:5173 (or http://localhost:8080 if using Docker)
 - **Backend API**: http://localhost:3001
-- **Import Page**: http://localhost:5173/import
+- **Import Page**: http://localhost:5173/import (or http://localhost:8080/import if using Docker)
 
 ## ✨ Features
 - 📺 **Anime & Manga Tracking** - Add, edit, and manage your collection
@@ -92,14 +104,13 @@ pnpm run dev
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React 18** - Modern UI library
-- **TypeScript** - Type-safe development
-- **Vite** - Lightning-fast build tool
-- **Tailwind CSS** - Utility-first styling
+- **React 19** - Cutting-edge UI library
+- **TypeScript 6** - Strict type-safe development
+- **Vite 8** - Ultra-fast build tool with Rolldown & Oxc
+- **Tailwind CSS v4** - Modern CSS-first utility framework
 - **shadcn/ui** - Beautiful component library
 - **Framer Motion** - Smooth animations
-- **React Query** - Data fetching and caching
-- **React Router** - Client-side routing
+- **React Router 7** - Modern client-side routing
 
 ### Backend
 - **Go** - High-performance server
@@ -143,6 +154,12 @@ pnpm run preview       # Preview production build
 
 # Backend
 go run cmd/server/main.go    # Start Go server
+
+### Development Container
+This project includes a **Dev Container** configuration for VS Code. To use it:
+1. Open this folder in VS Code.
+2. Click the blue button in the bottom-left corner and select **"Reopen in Container"**.
+3. All tools (Node 24, Go 1.21, pnpm) will be automatically configured for you.
 ```
 
 ## 🚀 Deployment
