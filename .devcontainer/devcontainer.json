@@ -32,7 +32,11 @@
     "source=aniryu-go-cache,target=/home/vscode/.cache/go-build,type=volume",
     "source=aniryu-go-mod,target=/home/vscode/go/pkg/mod,type=volume"
   ],
-  "forwardPorts": [3000, 3001, 5173],
-  "postCreateCommand": "echo '--- Dev Container Startup Started ---' && echo 'Checking pnpm version:' && pnpm --version && echo 'Installing NodeJS dependencies...' && pnpm install && echo 'Installing Go dependencies...' && cd backend && go mod download && echo '--- Dev Container Startup Finished ---'",
+  "forwardPorts": [
+    3000,
+    3001,
+    5173
+  ],
+  "postCreateCommand": "sudo chown -R vscode:vscode ${containerWorkspaceFolder}/node_modules /home/vscode/.local/share/pnpm/store && echo '--- Dev Container Startup Started ---' && echo 'Checking pnpm version:' && pnpm --version && echo 'Installing NodeJS dependencies...' && pnpm install && echo 'Installing Go dependencies...' && cd backend && go mod download && echo '--- Dev Container Startup Finished ---'",
   "remoteUser": "vscode"
 }

@@ -32,13 +32,11 @@ A modern, full-stack application for tracking your anime and manga collection wi
    pnpm add -D esbuild
    ```
 
-3. **Run the application**
-   ```bash
-   # Double-click start.bat or run:
-   start.bat
-   ```
+### Easy Setup
+- **Windows**: Double-click `start.bat` or run it in your terminal.
+- **Linux/macOS/Dev Container**: Run `./bash_start.sh` to start both servers.
 
-That's it! The application will start both the backend and frontend servers automatically.
+These scripts will automatically handle starting the backend and frontend for you.
 
 ### Docker Setup (Recommended)
 The easiest way to run AniRyu is using Docker. This handles all dependencies (Node, Go, etc.) for you in a single command.
@@ -146,7 +144,8 @@ AniRyu/
 │   ├── services/          # API services
 │   └── types/             # TypeScript definitions
 ├── public/                 # Static assets
-└── start.bat              # Windows startup script
+├── start.bat              # Windows startup script
+└── bash_start.sh          # Linux/macOS/Dev Container startup script
 ```
 
 ## 🔧 Development
@@ -166,6 +165,10 @@ This project includes a **Dev Container** configuration for VS Code. To use it:
 1. Open this folder in VS Code.
 2. Click the blue button in the bottom-left corner and select **"Reopen in Container"**.
 3. All tools (Node 24, Go 1.21, pnpm) will be automatically configured for you.
+4. **Once inside**, simply run:
+   ```bash
+   ./bash_start.sh
+   ```
 ```
 
 ## 🚀 Deployment
