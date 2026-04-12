@@ -11,3 +11,16 @@ services:
       - PORT=3001
       - DB_PATH=/app/data/aniryu.db
       - GIN_MODE=release
+    develop:
+      watch:
+        - path: .
+          action: rebuild
+          ignore:
+            - node_modules/
+            - .git/
+            - data/
+            - backend/
+        - path: ./backend
+          action: rebuild
+          ignore:
+            - backend/vendor/

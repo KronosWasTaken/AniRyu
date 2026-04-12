@@ -45,9 +45,15 @@ The easiest way to run AniRyu is using Docker. This handles all dependencies (No
 
 1. **Install Docker Desktop** from [docker.com](https://www.docker.com/)
 2. **Run the application**:
-   ```powershell
-   docker compose up --build
-   ```
+   - **For Development (Auto-updates)**:
+     ```powershell
+     docker compose watch
+     ```
+     *This will automatically rebuild the container when you change your code.*
+   - **For Standard Run**:
+     ```powershell
+     docker compose up --build
+     ```
 3. **Access the app** at http://localhost:8080
 
 **Note**: Your data is automatically saved in the `./data` folder and will persist even if you stop or rebuild the container.
