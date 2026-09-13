@@ -1,6 +1,14 @@
 const ENV_API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined;
+function defaultDevApiBaseUrl(): string {
+  if (typeof window === 'undefined') return 'http://localhost:3001/api';
+  const { hostname, protocol } = window.location;
+  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1') {
+    return 'http://localhost:3001/api';
+  }
+  return `${protocol}//api.${hostname}/api`;
+}
 const DEFAULT_API_BASE_URL = import.meta.env.DEV
-  ? 'http://localhost:3001/api'
+  ? defaultDevApiBaseUrl()
   : typeof window !== 'undefined'
     ? `${window.location.origin}/api`
     : '/api';

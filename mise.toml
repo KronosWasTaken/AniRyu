@@ -1,0 +1,76 @@
+[tools]
+node = "24"
+pnpm = "12"
+go = "1.26"
+sops = "latest"
+age = "latest"
+direnv = "latest"
+"npm:portless" = "latest"
+
+[env]
+PORT = "3001"
+HOST = "localhost"
+GIN_MODE = "debug"
+ALLOWED_ORIGINS = "*"
+ANILIST_API_URL = "https://graphql.anilist.co"
+RATING_TYPE = "stars"
+
+[tasks.dev]
+description = "Start backend + frontend the plain way (localhost:3001 + localhost:5173)"
+run = """
+echo "==> backend  http://localhost:3001"
+echo "==> frontend http://localhost:5173"
+(cd backend && go run ./cmd/server/main.go) & pnpm dev & wait
+"""
+
+[tasks."dev:frontend"]
+description = "Vite dev server (plain ports)"
+run = "pnpm dev"
+
+[tasks."dev:backend"]
+description = "Go API server (plain ports)"
+run = "cd backend && go run ./cmd/server/main.go"
+
+[tasks."dev:named"]
+description = "Start backend + frontend via portless named URLs (https://aniryu.localhost + https://api.aniryu.localhost)"
+run = """
+echo "==> frontend https://aniryu.localhost"
+echo "==> backend  https://api.aniryu.localhost"
+echo "First run needs: portless trust  (admin/sudo for port 443)"
+(cd backend && portless api.aniryu go run ./cmd/server/main.go) & portless aniryu pnpm run dev:plain & wait
+"""
+
+[tasks."dev:frontend:named"]
+description = "Vite via portless as https://aniryu.localhost"
+run = "portless aniryu pnpm run dev:plain"
+
+[tasks."dev:backend:named"]
+description = "Go API via portless as https://api.aniryu.localhost"
+run = "cd backend && portless api.aniryu go run ./cmd/server/main.go"
+
+[tasks.build]
+description = "Build frontend + backend"
+run = "pnpm build && cd backend && go build -o build/aniryu-backend ./cmd/server/main.go"
+
+[tasks.install]
+description = "Install JS + Go deps"
+run = "pnpm install && cd backend && go mod download"
+
+[tasks.lint]
+description = "ESLint frontend"
+run = "pnpm lint"
+
+[tasks.secrets-decrypt]
+description = "Decrypt SOPS secrets into gitignored .env files (needs age key)"
+run = "bash ./scripts/sops-decrypt.sh"
+
+[tasks.secrets-encrypt]
+description = "Re-encrypt secrets after editing (needs age key + .sops.yaml recipient)"
+run = "bash ./scripts/sops-encrypt.sh"
+
+[tasks.doctor]
+description = "Check the five-tool setup"
+run = "bash ./scripts/doctor.sh"
+
+[settings]
+verbose = false

@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 5173,
+    allowedHosts: [".localhost", ".test"],
   },
   plugins: [tailwindcss(), react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
