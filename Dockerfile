@@ -1,6 +1,6 @@
 FROM node:24-alpine AS frontend-builder
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@12.4.1 --activate
+RUN corepack enable
 COPY package.json pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY . .

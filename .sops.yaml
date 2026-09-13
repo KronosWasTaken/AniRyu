@@ -1,7 +1,0 @@
-creation_rules:
-  - path_regex: secrets[/\\].*\.enc\.env$
-    age: age1kuqyumxthksqraszeuzkqs8rur26rt0dfj39xx2hm49gqhpmuerqj9cgeu
-  - path_regex: secrets[/\\].*\.enc\.yaml$
-    age: age1kuqyumxthksqraszeuzkqs8rur26rt0dfj39xx2hm49gqhpmuerqj9cgeu
-  - path_regex: backend[/\\].*\.enc\.env$
-    age: age1kuqyumxthksqraszeuzkqs8rur26rt0dfj39xx2hm49gqhpmuerqj9cgeu

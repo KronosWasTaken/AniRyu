@@ -3,12 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "packageManager": "pnpm@12.4.1",
   "scripts": {
     "dev": "vite",
-    "dev:plain": "vite",
-    "dev:named": "portless aniryu pnpm run dev:plain",
-    "dev:backend:named": "cd backend && portless api.aniryu go run ./cmd/server/main.go",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
@@ -84,5 +80,11 @@
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.58.1",
     "vite": "^8.0.8"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "esbuild"
+    ]
   }
 }

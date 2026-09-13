@@ -68,43 +68,6 @@ go run cmd/server/main.go
 pnpm run dev
 ```
 
-## 🧰 Dev environments: mise · devenv · direnv · SOPS · Portless
-
-Two lanes — pick **one** for PATH/tools (upstream advises against mixing mise with
-direnv on PATH: https://mise.jdx.dev/direnv.html):
-
-| Lane | Platform | Setup |
-|---|---|---|
-| **A: devenv + direnv** (Nix, reproducible) | Linux / macOS / WSL2 | `nix install` → `direnv allow` → `devenv up` |
-| **B: mise** (no Nix) | Windows / anywhere | `winget install jdx.mise` → `mise install` → `mise run dev` |
-
-`./scripts/doctor.sh` (or `mise run doctor`) checks all five tools.
-
-```bash
-# Lane A — plain ports (localhost:5173 + localhost:3001)
-devenv up
-# Lane B — plain ports
-mise run dev
-
-# Named URLs via Portless (https://aniryu.localhost + https://api.aniryu.localhost)
-portless trust            # once: local CA + port 443 (needs admin/sudo)
-mise run dev:named        # or: pnpm dev:named (+ backend separately)
-```
-
-**Secrets (SOPS/age)** — plaintext never committed; only `*.enc.env` is:
-
-```bash
-./scripts/sops-setup.sh    # generate age key, paste age1... into .sops.yaml
-cp secrets/dev.example.env secrets/dev.env   # fill in, then:
-./scripts/sops-encrypt.sh  # -> secrets/dev.enc.env + backend/dev.enc.env (commit)
-./scripts/sops-decrypt.sh  # -> .env.local + backend/.env (gitignored, auto-loaded by direnv)
-```
-
-**Files**: `mise.toml` (tools/env/tasks) · `devenv.nix` + `devenv.yaml` (Nix lane) ·
-`.envrc` (Lane A activation + dotenv) · `.sops.yaml` + `secrets/` · `portless.json`
-(frontend name `aniryu`; backend runs as `api.aniryu`). The frontend derives the API
-URL from `window.location`, so plain and named modes both work with no extra config.
-
 ## 🌐 Access Points
 - **Frontend**: http://localhost:5173 (or http://localhost:8080 if using Docker)
 - **Backend API**: http://localhost:3001

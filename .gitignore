@@ -16,29 +16,9 @@ build/
 # Environment variables
 .env
 .env.local
-backend/.env
 .env.development.local
 .env.test.local
 .env.production.local
-
-# SOPS / age: plaintext secrets must NEVER be committed.
-# Encrypted outputs (*.enc.env) ARE committed; these are not.
-secrets/dev.env
-secrets/*.plain.env
-backend/.env.plain.tmp
-*.decrypted
-*.dec.yaml
-
-# mise: personal overrides (mise.toml itself IS committed)
-mise.local.toml
-.mise.local.toml
-
-# devenv (Nix): build state + personal overrides
-.devenv/
-devenv.local.nix
-
-# direnv: per-machine state (the .envrc itself IS committed)
-.direnv/
 
 # Logs
 logs/
